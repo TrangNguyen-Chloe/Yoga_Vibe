@@ -9,6 +9,8 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.models import load_model
 
+import practice_mode 
+
 #setup
 data_dir = 'D:\Yoga_Companion\processed_set\data'
 poses_list = os.listdir(data_dir)
@@ -58,15 +60,16 @@ def live_prediction(classifier, classes):
             #prediction
             prediction = classifier.predict(np.array(lm_list)[np.newaxis, :, :])
 
-            if np.amax(prediction) > 0.6:
+            if np.amax(prediction) > 0.7:
                 label = np.argmax(prediction, axis = 1)
                 name = classes[int(label)]
 
                 cv2.putText(frame, name, (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
                 cv2.putText(frame, str(np.amax(prediction)), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
             
-            elif np.amax(prediction) <= 0.6:
-                cv2.putText(frame, 'pose undetected', (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
+            elif np.amax(prediction) <= 0.7:
+                name = 'pose undetected'
+                cv2.putText(frame, name, (20, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
                 cv2.putText(frame, str(np.amax(prediction)), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
 
             #draw skeleton
@@ -85,3 +88,5 @@ def live_prediction(classifier, classes):
             #     cv2.imwrite(img_path,frame)
     cap.release()
     cv2.destroyAllWindows()
+    return name, prediction
+
