@@ -19,7 +19,7 @@ classes = {i:poses_list[i] for i in range(len(poses_list))}
 classifier = load_model('skeleton_cnn_3.h5')
 
 #learning mode
-poses_lesson = ['mountain', 'tree']
+poses_lesson = ['mountain', 'downdog', 'warrior1', 'warrior2', 'goddess', 'tree']
 counters = 0
 errors = 0
 pose_index = 0 
@@ -39,7 +39,6 @@ def evaluate_pose(name):
             timer = '{:02d}:{:02d}'.format(min, sec)
             sleep(1)
             cv2.putText(frame, timer, (150, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
-
     else:
         errors += 1 
         if errors == 5:
