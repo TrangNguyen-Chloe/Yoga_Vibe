@@ -26,7 +26,6 @@ pose_index = 0
 time = 30
 
 def evaluate_pose(name):
-    # name, prediction = live_prediction.live_prediction(classifier, classes)
     global counters, errors, time, pose_index
 
     if name == poses_lesson[pose_index]:
@@ -34,16 +33,13 @@ def evaluate_pose(name):
         if counters == 30:
             cv2.putText(frame, 'finished', (120, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
             switch_pose()
-            # cap.release()
-            # cv2.destroyAllWindows()
         elif counters < 30:
             time -= 1 
             min, sec = divmod(time, 60)
             timer = '{:02d}:{:02d}'.format(min, sec)
             sleep(1)
             cv2.putText(frame, timer, (150, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
-            # sys.stdout.write('\r' + timer)
-            # sys.stdout.flush()
+
     else:
         errors += 1 
         if errors == 5:
@@ -64,7 +60,6 @@ def switch_pose(): #thread = False until evaluate done?
         pose_index += 1 
         cv2.putText(frame, poses_lesson[pose_index], (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
         time = 30
-
 
 def live_prediction(classifier, classes):
     global cap, errors, counters, time 
@@ -108,7 +103,9 @@ def live_prediction(classifier, classes):
             #draw skeleton
             mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS, mp_drawing.DrawingSpec(color = (245, 117, 66), thickness=2,  circle_radius=2), mp_drawing.DrawingSpec(color = (245, 66, 230), thickness = 2, circle_radius=2))
             
+            #get result and evaluate, start timer
             evaluate_pose(name)
+
             #testing timer and evaluate feature
             # if name == 'mountain':
             #     if counters == 30: 
@@ -130,7 +127,6 @@ def live_prediction(classifier, classes):
             #         counters = 0
                     # return live_prediction(classifier, classes, time, counters, errors)    
 
-
             cv2.imshow('Yoga practice', frame)
             c = cv2.waitKey(1) 
             if c == 27:
@@ -139,7 +135,6 @@ def live_prediction(classifier, classes):
     cap.release()
     cv2.destroyAllWindows()
         
-
 live_prediction(classifier, classes)
 
 
