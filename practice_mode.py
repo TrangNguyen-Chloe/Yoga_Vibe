@@ -8,8 +8,6 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.models import load_model
 from time import sleep
-import timeit
-import threading
 
 #setup
 data_dir = 'D:\Yoga_Companion\processed_set\data'
@@ -21,21 +19,22 @@ classes = {i:poses_list[i] for i in range(len(poses_list))}
 classifier = load_model('skeleton_cnn_4.h5')
 
 #practice mode
-poses_lesson = ['mountain', 'downdog', 'warrior1', 'warrior2', 'goddess', 'tree']
+# poses_lesson = ['mountain', 'downdog', 'warrior1', 'warrior2', 'goddess', 'tree']
 poses_lesson = ['mountain','tree']
 counters = 0
 errors = 0
 pose_index = 0 
 time = 10
 status = False
-def evaluate_pose(name, frame, cap):
+
+def evaluate_pose(name, frame):
     global counters, errors, time, pose_index, status
 
     if name == poses_lesson[pose_index]:
         counters += 1 
         if counters == 10:
             cv2.putText(frame, 'finished', (120, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
-            switch_pose(frame, cap)
+            switch_pose(frame)
             # sleep(1)
         elif counters < 10: 
             min, sec = divmod(time, 60)
@@ -51,12 +50,10 @@ def evaluate_pose(name, frame, cap):
             counters = 0
             return live_prediction(classifier, classes)
     
-def switch_pose(frame, cap): #thread = False until evaluate done?
+def switch_pose(frame): #thread = False until evaluate done?
     global errors, counters, time, pose_index, status
     if pose_index == 1:
         status = True
-        # cap.release()
-        # cv2.destroyAllWindows()
     elif pose_index <1:
         errors = 0
         counters = 0 
@@ -107,7 +104,7 @@ def live_prediction(classifier, classes):
             mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS, mp_drawing.DrawingSpec(color = (245, 117, 66), thickness=2,  circle_radius=2), mp_drawing.DrawingSpec(color = (245, 66, 230), thickness = 2, circle_radius=2))
             
             #get result and evaluate, start timer
-            evaluate_pose(name, frame, cap)
+            evaluate_pose(name, frame)
 
             cv2.imshow('Yoga practice', frame)
             c = cv2.waitKey(1) 
