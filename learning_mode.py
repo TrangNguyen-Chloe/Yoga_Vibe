@@ -16,7 +16,7 @@ poses_list.sort()
 classes = {i:poses_list[i] for i in range(len(poses_list))}
 
 #load model
-classifier = load_model('skeleton_cnn_3.h5')
+classifier = load_model('skeleton_cnn_4.h5')
 
 #learning mode
 poses_lesson = ['mountain', 'downdog', 'warrior1', 'warrior2', 'goddess', 'tree']
