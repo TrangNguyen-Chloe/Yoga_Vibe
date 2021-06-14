@@ -22,21 +22,22 @@ classifier = load_model('skeleton_cnn_4.h5')
 
 #practice mode
 poses_lesson = ['mountain', 'downdog', 'warrior1', 'warrior2', 'goddess', 'tree']
+poses_lesson = ['mountain','tree']
 counters = 0
 errors = 0
 pose_index = 0 
-time = 30
-
+time = 10
+status = False
 def evaluate_pose(name, frame, cap):
-    global counters, errors, time, pose_index
+    global counters, errors, time, pose_index, status
 
     if name == poses_lesson[pose_index]:
         counters += 1 
-        if counters == 30:
+        if counters == 10:
             cv2.putText(frame, 'finished', (120, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
             switch_pose(frame, cap)
             # sleep(1)
-        elif counters < 30: 
+        elif counters < 10: 
             min, sec = divmod(time, 60)
             timer = '{:02d}:{:02d}'.format(min, sec)
             time -= 1
@@ -45,22 +46,23 @@ def evaluate_pose(name, frame, cap):
     else:
         errors += 1 
         if errors == 5:
-            time = 30 
+            time = 10 
             errors = 0 
             counters = 0
             return live_prediction(classifier, classes)
     
 def switch_pose(frame, cap): #thread = False until evaluate done?
-    global errors, counters, time, pose_index
-    if pose_index == 5:
-        cap.release()
-        cv2.destroyAllWindows()
-    elif pose_index <5:
+    global errors, counters, time, pose_index, status
+    if pose_index == 1:
+        status = True
+        # cap.release()
+        # cv2.destroyAllWindows()
+    elif pose_index <1:
         errors = 0
         counters = 0 
         pose_index += 1 
         cv2.putText(frame, poses_lesson[pose_index], (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
-        time = 30
+        time = 10
 
 def live_prediction(classifier, classes):
     global errors, counters, time 
@@ -111,9 +113,11 @@ def live_prediction(classifier, classes):
             c = cv2.waitKey(1) 
             if c == 27:
                 break 
+            if status:
+                break
 
-    # cap.release()
-    # cv2.destroyAllWindows()
+    cap.release()
+    cv2.destroyAllWindows()
 
 live_prediction(classifier, classes)
 
