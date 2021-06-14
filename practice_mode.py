@@ -8,6 +8,8 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.models import load_model
 from time import sleep
+import timeit
+import threading
 
 #setup
 data_dir = 'D:\Yoga_Companion\processed_set\data'
@@ -18,25 +20,26 @@ classes = {i:poses_list[i] for i in range(len(poses_list))}
 #load model
 classifier = load_model('skeleton_cnn_4.h5')
 
-#learning mode
+#practice mode
 poses_lesson = ['mountain', 'downdog', 'warrior1', 'warrior2', 'goddess', 'tree']
 counters = 0
 errors = 0
 pose_index = 0 
 time = 30
 
-def evaluate_pose(name):
+def evaluate_pose(name, frame, cap):
     global counters, errors, time, pose_index
 
     if name == poses_lesson[pose_index]:
         counters += 1 
         if counters == 30:
             cv2.putText(frame, 'finished', (120, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
-            switch_pose()
-        elif counters < 30:
-            time -= 1 
+            switch_pose(frame, cap)
+            # sleep(1)
+        elif counters < 30: 
             min, sec = divmod(time, 60)
             timer = '{:02d}:{:02d}'.format(min, sec)
+            time -= 1
             sleep(1)
             cv2.putText(frame, timer, (150, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
     else:
@@ -46,14 +49,13 @@ def evaluate_pose(name):
             errors = 0 
             counters = 0
             return live_prediction(classifier, classes)
-            
-def switch_pose(): #thread = False until evaluate done?
+    
+def switch_pose(frame, cap): #thread = False until evaluate done?
     global errors, counters, time, pose_index
-    if pose_index == 1:
-        cv2.putText(frame, 'finished', (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
+    if pose_index == 5:
         cap.release()
         cv2.destroyAllWindows()
-    elif pose_index <1:
+    elif pose_index <5:
         errors = 0
         counters = 0 
         pose_index += 1 
@@ -61,21 +63,21 @@ def switch_pose(): #thread = False until evaluate done?
         time = 30
 
 def live_prediction(classifier, classes):
-    global cap, errors, counters, time 
-    cap = cv2.VideoCapture(0)
+    global errors, counters, time 
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     #set up mediapipe
     with mp_pose.Pose(min_detection_confidence = 0.5, min_tracking_confidence = 0.5) as pose:
         while cap.isOpened():
-            global frame
+            # global frame
             ret, frame = cap.read()
-            img = frame.copy()
+            # img = frame.copy()
 
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-            img.flags.writeable = False
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+            frame.flags.writeable = False
             #detection
-            results = pose.process(img)
-            img.flags.writeable = True 
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            results = pose.process(frame)
+            frame.flags.writeable = True 
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             if not results.pose_landmarks:
                     continue 
             
@@ -103,37 +105,17 @@ def live_prediction(classifier, classes):
             mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS, mp_drawing.DrawingSpec(color = (245, 117, 66), thickness=2,  circle_radius=2), mp_drawing.DrawingSpec(color = (245, 66, 230), thickness = 2, circle_radius=2))
             
             #get result and evaluate, start timer
-            evaluate_pose(name)
-
-            #testing timer and evaluate feature
-            # if name == 'mountain':
-            #     if counters == 30: 
-            #         cv2.putText(frame, 'finish', (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
-            #         break
-            #     elif counters < 30:
-            #         counters += 1
-            #         # continue
-            #         # time -= 1 
-            #         # min, sec = divmod(time, 60)
-            #         # timer = '{:02d}:{:02d}'.format(min, sec )
-            #         # cv2.putText(frame, timer, (100, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
-            # elif name != 'mountain':
-            #     errors += 1 
-            #     if errors == 5:
-            #         cv2.putText(frame, 'error', (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 1, 255), thickness = 2)
-            #         time = 30 
-            #         errors = 0 
-            #         counters = 0
-                    # return live_prediction(classifier, classes, time, counters, errors)    
+            evaluate_pose(name, frame, cap)
 
             cv2.imshow('Yoga practice', frame)
             c = cv2.waitKey(1) 
             if c == 27:
                 break 
 
-    cap.release()
-    cv2.destroyAllWindows()
-        
+    # cap.release()
+    # cv2.destroyAllWindows()
+
 live_prediction(classifier, classes)
+
 
 
