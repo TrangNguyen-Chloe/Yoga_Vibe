@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, jsonify
 import base64
 import uuid 
 import re
-from learning_mode import *
+from main_prediction import *
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -43,7 +43,6 @@ def pose_predict():
     data_image = request.get_json()
     image_path = parse_image(data_image['data-uri'].encode())
     name = live_prediction(classifier, classes, image_path)
-
     return jsonify({'label': name}) 
 
 if __name__ == "__main__":
