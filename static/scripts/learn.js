@@ -1,5 +1,5 @@
+// script for learn mode on web flask app
 
-// Your code to run since DOM is loaded and ready
 Webcam.set({
     width: 640,
     height: 480,
@@ -44,8 +44,7 @@ function pose_webcam_dectect(){
 }
 
 
-webcam_interval = setInterval(pose_webcam_dectect, 1000);
-
+webcam_interval = setInterval(pose_webcam_dectect, 2000);
 
 document.addEventListener("DOMContentLoaded", function(event) {
 

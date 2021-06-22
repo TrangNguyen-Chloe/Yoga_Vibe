@@ -1,5 +1,5 @@
+// script for practice mode on web flask app
 
-// Your code to run since DOM is loaded and ready
 Webcam.set({
     width: 640,
     height: 480,
@@ -44,7 +44,7 @@ function pose_webcam_dectect(){
 }
 
 
-webcam_interval = setInterval(pose_webcam_dectect, 1000);
+webcam_interval = setInterval(pose_webcam_dectect, 2000);
 
 
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         var time_total = 0;
         var errors = 0; 
         var index=0;
-        var time_each = 10
+        var time_each = 45;
         var timeleft = time_each;
 
         pose_dom.innerHTML=pose_list[index];
