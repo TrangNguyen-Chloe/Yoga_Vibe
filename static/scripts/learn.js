@@ -50,11 +50,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     
     function timer(){
-        var pose_list = ['mountain', 'downdog', 'warrior1', 'warrior2', 'goddess', 'tree']
+        var pose_list = ['mountain', 'warrior1', 'warrior2', 'downdog', 'goddess', 'tree']
         var pose_img_link = ['\\static\\images\\mountain.png', 
-                            '\\static\\images\\downdog.png', 
                             '\\static\\images\\warrior1.png', 
                             '\\static\\images\\warrior2.png', 
+                            '\\static\\images\\downdog.png', 
                             '\\static\\images\\goddess.png', 
                             '\\static\\images\\tree.png']
 
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
             if (current_pose_detect != pose_list[index]){
                 errors += 1;
-                if (errors == 5){
+                if (errors == 3){
                     timeleft = time_each;
                     time_total = index*time_each;
                     errors = 0;
