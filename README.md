@@ -1,5 +1,5 @@
 # Product's name: Yoga Vibe 
-## An AI companion for an exciting yoga journey
+## An AI companion for your exciting yoga journey
 
 ## Purposes and Motivations
 - Yoga is a great way to develop both physical and mental health. A few minutes doing yoga a day can relieve our minds, brings joys and happiness which will be a huge felp for us in this hard time. The need for this is even rising during this covid-19 era, even though there are online yoga classes, limitation of time is still threre.. so a self-instructed app for this is essential.
